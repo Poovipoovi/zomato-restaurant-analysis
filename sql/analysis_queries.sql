@@ -1,109 +1,191 @@
 -- Zomato Restaurant Survival Analysis
--- SQL Queries for Business Analysis
--- Dataset: Zomato Bangalore (51,717 records, 11 columns)
--- Tool: SQLite via DB Browser
+-- SQL Business Analysis
+-- Dataset: Zomato Bangalore (51,717 Records)
+-- Tool: SQLite (DB Browser for SQLite)
 -- Author: Poovizhi A
 
+---
 
--- Restaurant Type Analysis
+## -- 1. RESTAURANT TYPE ANALYSIS
 
-select rest_type, count(*) as total_restaurants,
-round(avg(rate), 2) as avg_rating, sum(votes) as total_votes
-from zomato_clean
-group by rest_type
-order by total_restaurants desc
-limit 10;
+-- Business Question:
+-- Which restaurant types are most common and which receive the highest ratings?
 
--- Quick Bites dominated with 19,132 restaurants but averaged only 3.55
--- Microbrewery and Casual Dining achieved the highest average rating of 4.37
+SELECT rest_type,
+COUNT(*) AS restaurant_count,
+ROUND(AVG(rating),2) AS avg_rating,
+SUM(votes) AS total_votes
+FROM zomato
+WHERE rating IS NOT NULL
+GROUP BY rest_type
+ORDER BY restaurant_count DESC
+LIMIT 10;
 
+-- Finding:
+-- Quick Bites dominated with 19,132 restaurants.
+-- Casual Dining followed with 10,330 restaurants.
 
--- Online Order Analysis
+SELECT rest_type,
+COUNT(*) AS restaurant_count,
+SUM(votes) AS total_votes,
+ROUND(AVG(rating),2) AS avg_rating
+FROM zomato
+WHERE rating IS NOT NULL
+GROUP BY rest_type
+HAVING COUNT(*) >= 100
+ORDER BY avg_rating DESC;
 
-select online_order, count(*) as total_restaurants,
-round(avg(rate), 2) as avg_rating, sum(votes) as total_votes
-from zomato_clean
-group by online_order;
+-- Finding:
+-- Microbrewery & Casual Dining achieved the highest average rating of 4.37.
+-- Premium dining formats consistently outperformed Quick Bites in customer ratings.
 
--- Restaurants with online ordering averaged 3.72 with 9.34 million votes
--- Restaurants without online ordering averaged 3.66 with 5.31 million votes
+---
 
+## -- 2. ONLINE ORDER ANALYSIS
 
--- Cuisine Analysis
+-- Business Question:
+-- Do restaurants accepting online orders receive higher ratings?
 
-select cuisines, count(*) as restaurant_count,
-round(avg(rate), 2) as avg_rating, sum(votes) as total_votes,
-round(avg(votes), 0) as avg_votes_per_restaurant
-from zomato_clean
-where cuisines is not null
-group by cuisines
-having count(*) > 50
-order by total_votes desc
-limit 15;
+SELECT online_order,
+COUNT(*) AS restaurant_count,
+SUM(votes) AS total_votes,
+ROUND(AVG(rating),2) AS avg_rating
+FROM zomato
+WHERE rating IS NOT NULL
+GROUP BY online_order;
 
--- North Indian was most common with 2,158 restaurants but averaged only 3.59
--- Cafe, American, Burger and Steak averaged 4.60 with 7,001 votes per restaurant
+-- Finding:
+-- Restaurants offering online ordering achieved an average rating of 3.72.
+-- Restaurants without online ordering averaged 3.66.
+-- Online-order restaurants generated 9.34 million votes compared to 5.31 million votes.
 
+---
 
--- Location Analysis
+## -- 3. CUISINE ANALYSIS
 
-select location, count(*) as num_restaurants,
-round(avg(rate), 2) as avg_rating, sum(votes) as total_votes
-from zomato_clean
-group by location
-order by num_restaurants desc
-limit 20;
+-- Business Question:
+-- Which cuisines are most popular and receive the highest engagement?
 
--- BTM had the highest count with 2,610 restaurants
--- MG Road, Church Street and Brigade Road recorded highest average ratings at 3.80
+SELECT cuisines,
+COUNT(*) AS restaurant_count,
+SUM(votes) AS total_votes,
+ROUND(AVG(votes),0) AS avg_votes_per_restaurant,
+ROUND(AVG(rating),2) AS avg_rating
+FROM zomato
+WHERE rating IS NOT NULL
+GROUP BY cuisines
+HAVING COUNT(*) >= 30
+ORDER BY avg_votes_per_restaurant DESC;
 
+-- Finding:
+-- North Indian was the most common cuisine with 2,158 restaurants.
+-- Cafe, American, Burger & Steak achieved a rating of 4.60 and averaged 7,001 votes per restaurant.
 
--- Cost vs Rating Analysis
+---
 
-select
-case
-when approx_cost < 300 then 'Budget under 300'
-when approx_cost < 600 then 'Mid-range 300 to 600'
-when approx_cost < 1000 then 'Premium 600 to 1000'
-else 'Luxury 1000 and above'
-end as price_segment,
-count(*) as total_restaurants,
-round(avg(rate), 2) as avg_rating
-from zomato_clean
-where approx_cost is not null
-group by price_segment
-order by avg_rating desc;
+## -- 4. LOCATION ANALYSIS
 
--- Budget restaurants averaged 3.56 to 3.57
--- Restaurants above 1,100 achieved an average rating of 4.05
+-- Business Question:
+-- Which locations perform best in terms of restaurant density, engagement and ratings?
 
+SELECT "listed_in(city)",
+COUNT(*) AS restaurant_count,
+SUM(votes) AS total_votes
+FROM zomato
+GROUP BY "listed_in(city)"
+ORDER BY restaurant_count DESC;
 
--- Market Saturation Analysis
+-- Finding:
+-- BTM recorded the highest restaurant concentration with 2,610 restaurants.
 
-select location, count(*) as num_restaurants,
-round(avg(rate), 2) as avg_rating,
-case
-when count(*) > 1500 and avg(rate) < 3.70 then 'Oversaturated'
-when count(*) > 1500 and avg(rate) >= 3.70 then 'High Demand'
-when count(*) < 500 and avg(rate) >= 3.80 then 'Hidden Gem'
-else 'Balanced'
-end as market_status
-from zomato_clean
-group by location
-having count(*) > 100
-order by num_restaurants desc;
+SELECT "listed_in(city)",
+COUNT(*) AS restaurant_count,
+SUM(votes) AS total_votes,
+ROUND(AVG(rating),2) AS avg_rating
+FROM zomato
+WHERE rating IS NOT NULL
+GROUP BY "listed_in(city)"
+HAVING COUNT(*) >= 100
+ORDER BY avg_rating DESC, total_votes DESC;
 
--- JP Nagar with 1,649 restaurants and 3.63 rating marked as Oversaturated
--- Jayanagar with 1,928 restaurants and 3.69 rating marked as Oversaturated
+-- Finding:
+-- MG Road, Church Street and Brigade Road recorded the highest average ratings (3.80).
 
+---
 
--- Business Model Analysis
+## -- 5. COST VS RATING ANALYSIS
 
-select online_order, book_table, count(*) as total_restaurants,
-round(avg(rate), 2) as avg_rating
-from zomato_clean
-group by online_order, book_table
-order by avg_rating desc;
+-- Business Question:
+-- Does restaurant pricing influence customer ratings?
 
--- Table booking with no online ordering recorded the highest average rating of 4.16
--- No table booking and no online ordering recorded the lowest average rating of 3.55
+SELECT
+ROUND("approx_cost(for two people)",-2) AS cost_bucket,
+COUNT(*) AS restaurant_count,
+ROUND(AVG(rating),2) AS avg_rating
+FROM zomato
+WHERE rating IS NOT NULL
+AND "approx_cost(for two people)" IS NOT NULL
+GROUP BY cost_bucket
+HAVING COUNT(*) >= 50
+ORDER BY cost_bucket;
+
+-- Finding:
+-- Restaurants priced between ₹100-₹300 averaged around 3.56-3.57.
+-- Ratings increased noticeably beyond the ₹600-₹700 range.
+-- Restaurants priced above ₹1,100 averaged approximately 4.05.
+
+---
+
+## -- 6. MARKET SATURATION ANALYSIS
+
+-- Business Question:
+-- Which locations appear oversaturated?
+
+SELECT "listed_in(city)",
+COUNT(*) AS restaurant_count,
+ROUND(AVG(rating),2) AS avg_rating
+FROM zomato
+WHERE rating IS NOT NULL
+GROUP BY "listed_in(city)"
+HAVING COUNT(*) >= 500
+ORDER BY restaurant_count DESC, avg_rating ASC;
+
+-- Finding:
+-- JP Nagar (1,649 restaurants, 3.63 rating)
+-- Jayanagar (1,928 restaurants, 3.69 rating)
+-- These areas showed signs of market saturation due to high restaurant density and relatively lower ratings.
+
+---
+
+## -- 7. BUSINESS MODEL ANALYSIS
+
+-- Business Question:
+-- Which combination of online ordering and table booking achieves the highest ratings?
+
+SELECT online_order,
+book_table,
+COUNT(*) AS restaurant_count,
+ROUND(AVG(rating),2) AS avg_rating
+FROM zomato
+WHERE rating IS NOT NULL
+GROUP BY online_order, book_table
+ORDER BY avg_rating DESC;
+
+-- Finding:
+-- Table Booking = Yes and Online Order = No achieved the highest rating of 4.16.
+-- Restaurants without both services recorded the lowest rating of 3.55.
+-- Table booking showed a stronger relationship with ratings than online ordering.
+
+---
+
+## -- PROJECT SUMMARY
+
+-- Records Analyzed: 51,717
+-- SQL Concepts Used:
+-- SELECT, WHERE, GROUP BY, HAVING,
+-- ORDER BY, COUNT(), AVG(), SUM(), ROUND(), LIMIT
+
+-- Key Insight:
+-- Premium dining experiences, table booking availability,
+-- and higher price ranges were associated with stronger
+-- customer ratings and engagement across Bangalore restaurants.
