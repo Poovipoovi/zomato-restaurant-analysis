@@ -2,15 +2,34 @@
 
 EDA of 51,000+ Zomato Bangalore restaurants to identify what drives restaurant success
 
+## Project Overview
+This project analyzes 51,717 restaurant records from the Bangalore Zomato dataset to identify the factors associated with restaurant success. The analysis combines Excel, SQL, Python, and Power BI to uncover patterns in customer ratings, restaurant types, pricing, online ordering, customer engagement, and location performance.
+
+## Objectives
+1. Which restaurant types have the highest average ratings?
+2. Do restaurants that accept online orders rate higher than those that do not?
+3. Which cuisines are the most popular and highly rated?
+4. Which locations have the most restaurants and the best ratings?
+5. Is there a relationship between restaurant pricing and customer ratings?
+6. Which areas appear oversaturated with restaurants?
+7. What combination of features predicts a highly rated restaurant?
+
 ## Dataset
 - Source: Kaggle — Zomato Bangalore Restaurants
 - Not included in this repo. Download from Kaggle and place in data/ folder.
-- Rows: 51,718 | Columns: 17
+- Rows: 51,717 | Columns: 11
+
+## Tools Used
+- Excel – Data cleaning and preprocessing
+- SQLite (DB Browser) – Business analysis and SQL querying
+- Python (Pandas, Matplotlib) – Data visualization
+- Power BI – Interactive dashboard creation
+- Git & GitHub – Version control and project documentation
 
 ## Project Structure
 - data/       → Local only, not pushed
 - notebooks/  → Jupyter analysis notebooks
-- dashboard/  → Dashboard files
+- dashboard/  → Power BI dashboard files
 - reports/    → Reports and summaries
 - sql/        → SQL queries
 - visuals/    → Charts and plots
@@ -21,7 +40,7 @@ EDA of 51,000+ Zomato Bangalore restaurants to identify what drives restaurant s
 - Loaded dataset: 51,718 rows, 17 columns
 - Analyzed all columns for usability
 - Checked for null values and useful data
-- Cleaned the Rate column (had values like 1.8/5, 5/5) removed /5 using SUBSTITUTE formula
+- Cleaned Rate column using SUBSTITUTE formula to remove /5
 - Handled NEW text values in Rate column using IF formula
 - Dropped irrelevant columns not needed for analysis
 - Set up full project folder structure
@@ -31,6 +50,12 @@ EDA of 51,000+ Zomato Bangalore restaurants to identify what drives restaurant s
 - Ran 7 SQL analyses covering restaurant types, online orders, cuisines, locations, cost vs rating, market saturation, and business models
 - Key finding: Table booking has stronger impact on ratings than online ordering
 - Key finding: Premium restaurants (₹1,100–₹1,200) achieved 4.05 average rating
+
+### Day 3 — Python Visualizations
+- Imported cleaned dataset into Python
+- Created 6 visualizations: Top Locations, Top Restaurant Types, Cost vs Rating, Online Order vs Rating, Business Model Analysis, Cuisine Engagement
+- Used Pandas and Matplotlib for analysis and plotting
+- Saved all charts to visuals/ folder
 
 ## Key Findings
 
@@ -62,3 +87,6 @@ EDA of 51,000+ Zomato Bangalore restaurants to identify what drives restaurant s
 - Table Booking Yes + Online Order No recorded highest average rating of 4.16
 - No table booking + no online order recorded lowest rating of 3.55
 - Table reservation has stronger impact on ratings than online ordering
+
+## Author
+Poovizhi A — Aspiring Data Analyst
