@@ -57,6 +57,12 @@ This project analyzes 51,717 restaurant records from the Bangalore Zomato datase
 - Used Pandas and Matplotlib for analysis and plotting
 - Saved all charts to visuals/ folder
 
+### Day 4 — Power BI Dashboard
+- Built a 2-page interactive Power BI dashboard
+- Page 1 (Executive Overview): KPI cards for total restaurants, average rating, total votes, total locations, restaurant types, and average cost. Includes top 10 locations by restaurant count, restaurant type distribution, and cost vs rating correlation. Added slicers for location, restaurant type, table booking, online order, and rating range.
+- Page 2 (Restaurant Insights): Top 10 most expensive restaurant types, cost and rating trends across top locations, online ordering vs rating comparison, table booking vs rating comparison, and a key insights summary panel.
+- Dashboard file saved in dashboard/ folder, screenshots saved in visuals/ folder
+
 ## Key Findings
 
 ### Restaurant Type Analysis
@@ -87,6 +93,11 @@ This project analyzes 51,717 restaurant records from the Bangalore Zomato datase
 - Table Booking Yes + Online Order No recorded highest average rating of 4.16
 - No table booking + no online order recorded lowest rating of 3.55
 - Table reservation has stronger impact on ratings than online ordering
+
+## Dashboard Preview
+
+![Executive Overview](visuals/dashboard_page1.png)
+![Restaurant Insights](visuals/dashboard_page2.png)
 
 ## Author
 Poovizhi A — Aspiring Data Analyst
