@@ -10,6 +10,7 @@ result = (
     .head(10)
 )
 
+
 plt.figure(figsize=(12,6))
 result.sort_values().plot(kind="barh")
 
